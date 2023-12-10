@@ -1,32 +1,15 @@
 let currentChapter;
-const totalChapters = 10;
-
-// Hàm đọc số chương được đọc gần đây từ tệp LastRead.txt
-function getLastReadChapter() {
-  const lastReadFileName = "LastRead.txt";
-
-  return fetch(lastReadFileName)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
-      return response.text();
-    })
-    .then((data) => parseInt(data))
-    .catch((error) => {
-      console.error("Error reading LastRead.txt:", error);
-      return 1; // Nếu có lỗi, trả về giá trị mặc định là 1
-    });
-}
+const totalChapters = 11;
 
 // Hàm khởi tạo trang
 function initializePage() {
   // Gọi hàm để đọc số chương được đọc gần đây và cập nhật giá trị chương hiện tại
-  getLastReadChapter().then((lastReadChapter) => {
-    currentChapter = lastReadChapter || 1; // Nếu không có giá trị, sử dụng mặc định là 1
-    updateSelectValues();
-    loadFile();
-  });
+  if(!localStorage.getItem("chapter")) {
+    localStorage.setItem("chapter",1);
+  }
+  currentChapter = parseInt(localStorage.getItem("chapter")); 
+  updateSelectValues();
+  loadFile();
 }
 
 // Hàm cập nhật giá trị của tất cả các dropdown có class "chapterSelect"
@@ -86,18 +69,7 @@ function loadFile(direction) {
 
 // Hàm cập nhật số chương được đọc gần đây vào tệp LastRead.txt
 function updateLastRead(chapter) {
-  const lastReadFileName = "LastRead.txt";
-  const lastReadContent = chapter.toString();
-
-  fetch(lastReadFileName, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "text/plain",
-    },
-    body: lastReadContent,
-  }).catch((error) => {
-    console.error("Error updating LastRead.txt:", error);
-  });
+  localStorage.setItem("chapter",chapter);
 }
 
 // Gọi hàm để khởi tạo trang
